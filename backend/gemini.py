@@ -1,22 +1,36 @@
-import google.generativeai as genai
 import os
 from dotenv import load_dotenv
+from google.genai import Client, types
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+client = Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-EMBED_MODEL = "models/embedding-001"
-TEXT_MODEL = "models/gemini-1.5-flash"
+EMBED_MODEL = "models/gemini-embedding-001"
+TEXT_MODEL = "models/gemini-2.5-flash"
 
-# return embedding vector for similarity comparisons (store in db)
+
+from google.genai import types
+
+from google.genai import types
+
 def get_embedding(text: str) -> list[float]:
-    result = genai.embed_content(
+    """
+    Return a plain list of floats for the embedding vector using the new Gemini SDK.
+    """
+    response = client.models.embed_content(
         model=EMBED_MODEL,
-        content=text,
-        task_type="retrieval_document"
+        contents=[text]  # note: contents should be a list
     )
-    return result["embedding"]
+
+    # response.embeddings is a list of ContentEmbedding objects
+    embedding_obj = response.embeddings[0]
+
+    if isinstance(embedding_obj, types.ContentEmbedding):
+        return embedding_obj.values  # plain float list
+    else:
+        raise ValueError(f"Cannot extract embedding vector from {type(embedding_obj)}")
+
 
 def analyze(query: str, memories: list[str]) -> str:
     prompt = f"""
@@ -30,6 +44,9 @@ Current issue:
 
 Answer the question and identify any repeated mistake or pattern.
 """
-    model = genai.GenerativeModel(TEXT_MODEL)
-    response = model.generate_content(prompt)
+    # correct text generation call
+    response = client.models.generate_content(
+        model=TEXT_MODEL,
+        contents=prompt
+    )
     return response.text
