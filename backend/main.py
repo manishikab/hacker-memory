@@ -55,6 +55,8 @@ def analyze_query(q: QueryRequest):
 
 class MemoryRequest(BaseModel):
     content: str
+    type: str | None = None
+
 
 @app.post("/memory")
 def add_memory(m: MemoryRequest):
@@ -62,9 +64,23 @@ def add_memory(m: MemoryRequest):
         embedding_vector = get_embedding(m.content)
         doc = {
             "text": m.content,
+            "type": m.type or "generic",
             "embedding": embedding_vector
         }
         collection.insert_one(doc)
         return {"status": "success"}
     except Exception as e:
         return {"error": str(e)}
+
+@app.get("/")
+def root():
+    return {"FastAPI is running!"}
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # your React app
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

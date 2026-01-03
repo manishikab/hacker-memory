@@ -7,20 +7,28 @@ export default function LeetcodePage({ problems, onSubmit, onDelete }) {
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
   const [description, setDescription] = useState("");
+  const [solution, setSolution] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(e);
 
-    await fetch("http://localhost:8000/leetcode/add/", {
+
+    await fetch("http://localhost:8000/memory", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, difficulty, description })
+      body: JSON.stringify({
+        content: `Leetcode Problem:
+        Title: ${title}
+        Difficulty: ${difficulty}
+        Description: ${description}
+        Solution: ${solution}`
+        })
     });
 
     setTitle("");
     setDifficulty("Easy");
     setDescription("");
+    setSolution("");
     formRef.current.reset();
   };
 
@@ -81,8 +89,8 @@ export default function LeetcodePage({ problems, onSubmit, onDelete }) {
                 name="solution"
                 placeholder="Describe the solution or add an image"
                 rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={solution}
+                onChange={(e) => setSolution(e.target.value)}
                 required
               />
             </div>

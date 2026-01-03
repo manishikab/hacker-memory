@@ -10,13 +10,13 @@ export default function BugsPage({ bugs, onSubmit, onDelete }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    handleSubmit(e);         
     
-    await fetch("http://localhost:8000/bugs/add/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content })
-    });
+
+     await fetch("http://localhost:8000/memory", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content: `Bug: ${title}\n${content}` })
+  });
 
     setTitle("");
     setContent("");

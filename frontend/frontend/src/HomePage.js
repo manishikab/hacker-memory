@@ -1,48 +1,102 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import './HomePage.css';
 
-export default function HomePage({ data }) {
-  const [bugs, setBugs] = useState([]);
-  const [newBug, setNewBug] = useState("");
-  const [chat, setChat] = useState("");
-  const [messages, setMessages] = useState([]);
+const recentEntries = [
+  { title: "can we pull from gemini?", date: "2026-01-02" },
+  { title: "fix date overflow", date: "2026-01-01" },
+  { title: "test", date: "2025-12-30" },
+];
 
+const recentThemes = [
+  "also pull from gemini",
+  "test",
+  "test",
+  "something else below this?"
+];
 
-  const handleSendMessage = () => {
-    if (chat.trim()) {
-      setMessages([...messages, { text: chat, sender: "user" }]);
-      setChat("");
+function HomePage() {
+  const [query, setQuery] = useState("");
+  const [response, setResponse] = useState(""); // store AI response
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!query) return;
+
+    setLoading(true);
+    setResponse("");
+
+    try {
+      const res = await fetch("http://localhost:8000/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+      });
+
+      const data = await res.json();
+      if (data.result) setResponse(data.result);
+      else if (data.error) setResponse("Error: " + data.error);
+    } catch (err) {
+      setResponse("Error: " + err.message);
     }
+
+    setLoading(false);
+    setQuery("");
   };
 
   return (
-    <div className="dashboard">
-      <h1>Hacker Life, Simplified</h1>
-
-      <div className="sections">
-        <div className="section">★ Bugs: {data.bugs}</div>
-        <div className="section">★ Notes: {data.notes}</div>
-        <div className="section">★ Leetcode problems completed: {data.leetcode}</div>
-      </div>
-
-      <div className="chat">
-        <h2>Chat with your AI Assistant!</h2>
-        <div className="chat-box">
-          {messages.map((msg, index) => (
-            <div key={index} className={`message ${msg.sender}`}>
-              {msg.text}
-            </div>
+    <div className="app">
+      <aside className="sidebar">
+        <h2>Recent Entries</h2>
+        <ul>
+          {recentEntries.map((entry, idx) => (
+            <li key={idx}>
+              <strong>{entry.title}</strong>
+              <span>{entry.date}</span>
+            </li>
           ))}
-        </div>
-        <div className="chat-input">
+        </ul>
+
+        <h2>Recent Themes</h2>
+        <ul>
+          {recentThemes.map((theme, idx) => (
+            <li key={idx}>{theme}</li>
+          ))}
+        </ul>
+      </aside>
+
+      <main className="main-content">
+        <nav className="navbar">
+          <div className="logo"> >_ </div>
+          <div className="nav-links">
+            <a href="Notes">Notes</a>
+            <a href="LeetCode">LeetCode</a>
+            <a href="Bugs">Bugs</a>
+          </div>
+        </nav>
+
+        <h1>Cache Overflow</h1>
+        <p>Your second brain for all your hacking knowledge.</p>
+
+        <form onSubmit={handleSearch} className="search-form">
           <input
             type="text"
-            placeholder="Type a message..."
-            value={chat}
-            onChange={(e) => setChat(e.target.value)}
+            placeholder="Ask something like: 'Have I seen this bug before?'"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
           />
-          <button onClick={handleSendMessage}>Send</button>
-        </div>
-      </div>
+          <button type="submit">{loading ? "Thinking..." : "Ask AI"}</button>
+        </form>
+
+        {response && (
+          <div className="response-box">
+            <h3>AI Answer:</h3>
+            <p>{response}</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
+
+export default HomePage;
