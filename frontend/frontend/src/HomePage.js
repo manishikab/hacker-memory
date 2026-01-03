@@ -1,23 +1,29 @@
-import React, { useState } from 'react';
-import './HomePage.css';
-
-const recentEntries = [
-  { title: "can we pull from gemini?", date: "2026-01-02" },
-  { title: "fix date overflow", date: "2026-01-01" },
-  { title: "test", date: "2025-12-30" },
-];
-
-const recentThemes = [
-  "also pull from gemini",
-  "test",
-  "test",
-  "something else below this?"
-];
+import React, { useState, useEffect } from "react";
+import "./HomePage.css";
 
 function HomePage() {
   const [query, setQuery] = useState("");
-  const [response, setResponse] = useState(""); // store AI response
+  const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [recentEntries, setRecentEntries] = useState([]);
+  const [recentThemes, setRecentThemes] = useState([]);
+
+  useEffect(() => {
+    refreshSidebar();
+  }, []);
+
+  const refreshSidebar = async () => {
+    try {
+      const entries = await fetch("http://localhost:8000/recent-memories").then(r => r.json());
+      const themes = await fetch("http://localhost:8000/recent-themes").then(r => r.json());
+
+      setRecentEntries(entries || []);
+      setRecentThemes(themes || []);
+    } catch (err) {
+      console.error("Failed to fetch sidebar data:", err);
+    }
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -34,8 +40,13 @@ function HomePage() {
       });
 
       const data = await res.json();
-      if (data.result) setResponse(data.result);
-      else if (data.error) setResponse("Error: " + data.error);
+
+      if (data.result) {
+        setResponse(data.result);
+        refreshSidebar(); // update sidebar after memory consolidation
+      } else if (data.error) {
+        setResponse("Error: " + data.error);
+      }
     } catch (err) {
       setResponse("Error: " + err.message);
     }
@@ -46,28 +57,43 @@ function HomePage() {
 
   return (
     <div className="app">
+      {/* SIDEBAR */}
       <aside className="sidebar">
-        <h2>Recent Entries</h2>
+        <h2>🧠 Recent Memories</h2>
         <ul>
-          {recentEntries.map((entry, idx) => (
-            <li key={idx}>
-              <strong>{entry.title}</strong>
-              <span>{entry.date}</span>
-            </li>
-          ))}
+          {recentEntries.length === 0 && <li>No memories yet</li>}
+          {recentEntries.map((entry, idx) => {
+            const text = entry.title || entry.text || "Untitled";
+            const date = entry.date || entry.created_at || "";
+            return (
+              <li key={idx} className="clickable" onClick={() => setQuery(text)}>
+                <strong>{text.length > 50 ? text.slice(0, 50) + "…" : text}</strong>
+                <span className="entry-type">{date}</span>
+              </li>
+            );
+          })}
         </ul>
 
-        <h2>Recent Themes</h2>
-        <ul>
-          {recentThemes.map((theme, idx) => (
-            <li key={idx}>{theme}</li>
-          ))}
-        </ul>
+        <h2>🔁 Recurring Patterns</h2>
+        <div className="themes">
+          {recentThemes.length === 0 && (
+            <span className="muted">No patterns detected yet</span>
+          )}
+          {recentThemes.map((theme, idx) => {
+            const label = theme.label || theme.text || "Pattern";
+            return (
+              <span key={idx} className="theme-chip">
+                {label}
+              </span>
+            );
+          })}
+        </div>
       </aside>
 
+      {/* MAIN */}
       <main className="main-content">
         <nav className="navbar">
-          <div className="logo"> >_ </div>
+          <div className="logo">{">_"}</div>
           <div className="nav-links">
             <a href="Notes">Notes</a>
             <a href="LeetCode">LeetCode</a>
@@ -90,7 +116,7 @@ function HomePage() {
 
         {response && (
           <div className="response-box">
-            <h3>AI Answer:</h3>
+            <h3>AI Answer</h3>
             <p>{response}</p>
           </div>
         )}

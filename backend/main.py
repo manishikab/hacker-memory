@@ -48,6 +48,17 @@ def analyze_query(q: QueryRequest):
         # 4️⃣ Call analyze
         analysis = analyze(q.query, memories)
 
+        # save new insights
+        if analysis.startswith("INSIGHT:"):
+            insight_text = analysis.replace("INSIGHT:", "").strip()
+
+            collection.insert_one({
+                "text": insight_text,
+                "type": "pattern",
+                "source_query": q.query,
+                "embedding": get_embedding(insight_text),
+            })
+
         return {"result": analysis}
 
     except Exception as e:
@@ -84,3 +95,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/recent-memories")
+def recent_memories(limit: int = 5):
+    docs = (
+        collection
+        .find({}, {"text": 1, "type": 1, "_id": 0})
+        .sort("_id", -1)
+        .limit(limit)
+    )
+
+    return list(docs)
+
+@app.get("/recent-themes")
+def recent_themes(limit: int = 5):
+    docs = (
+        collection
+        .find({ "type": "pattern" }, {"text": 1, "_id": 0})
+        .sort("_id", -1)
+        .limit(limit)
+    )
+
+    return list(docs)
