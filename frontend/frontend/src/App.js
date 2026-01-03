@@ -60,9 +60,9 @@ export default function App() {
     
       <Routes>
         <Route path="/" element={<HomePage data={stats} />} />
-        <Route path="/notes" element={<NotesPage />} />
-        <Route path="/bugs" element={<BugsPage bugs={bugs} onDelete={handleDelete} />} />
-        <Route path="/leetcode" element={<LeetCodePage />} />
+        <Route path="/notes" element={<NotesPage notes={notes} onSubmit={handleSubmit} onDelete={handleDelete}/>} />
+        <Route path="/bugs" element={<BugsPage bugs={bugs} onSubmit={handleSubmit} onDelete={handleDelete} />} />
+        <Route path="/leetcode" element={<LeetCodePage problems={problems} onSubmit={handleSubmit} onDelete={handleDelete} />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/logout" element={<LogoutPage />} />
       </Routes>

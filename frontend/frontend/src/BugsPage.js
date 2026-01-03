@@ -10,13 +10,15 @@ export default function BugsPage({ bugs, onSubmit, onDelete }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    handleSubmit(e);         
+    // onSubmit(e);         
     
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
+
     await fetch("http://localhost:8000/bugs/add/", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content })
-    });
+      body: formData   });
 
     setTitle("");
     setContent("");
