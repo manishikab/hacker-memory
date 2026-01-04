@@ -111,8 +111,13 @@ def add_memory(m: MemoryRequest):
         return {"error": str(e)}
 
 @app.get("/")
-def root():
-    return {"FastAPI is running!"}
+def read_root():
+    return {"message": "Hello from FastAPI backend!"}
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
 
 from fastapi.middleware.cors import CORSMiddleware
 
