@@ -1,26 +1,8 @@
-What have I already learned, and how does my brain behave over time?
-Gives insights without user searching for them (makes it different than plain notes app)
-forgetting curve to make it more like memory system? This system models how a hacker learns, forgets, and repeats mistakes — and intervenes.
+We've always been fascinated by how hackers learn from experience: the cycle of trying, failing, forgetting, and trying again. Traditional notes apps let you record information, but they don’t reflect how your brain actually remembers and forgets over time. We wanted to build a system that actively tracks learning patterns, surfaces past mistakes, and helps prevent repeated errors.
 
+The inspiration came from the workflow of many hackers: how often we'd hit a bug we'd solved before, or forget an API nuance we thought we had mastered. We realized a “smart memory” for hackers could turn past mistakes into future insights, making learning more efficient.
 
-Goal: Given a past hacker experience, the system should be able to
-- recognize similar future problems
-- surface relevant past experience
-- generate meta-insight about learning patterns
+Cache Overflow is a smart memory system for hackers. It tracks not just what you’ve learned, but how you've learned. By entering entries for notes, leetcode questions, and encountered bugs, our AI system carefully tracks any patterns. Through a chatbox system, users can ask questions, and our AI answers based on past patterns. This generates meta-insights like “Which mistakes cost me the most time?” or “What knowledge am I underusing?", helping you learn faster and avoid repeating the same pitfalls.
 
-e.g.:
-“What mistakes cost me the most time?”
-“What knowledge do I underuse?”
-“How has my thinking evolved?”
+We used FastAPI for the backend, creating a system that logs entries into MongoDB. We incorporated Gemini to provide a space for hackers to ask their questions and get relevant answers, including if this is a repeating pattern or an already encountered solution for the hacker.
 
-Q: "Have I Solved This Before: TypeError: Cannot read property 'map' of undefined"
-A: “Yes. You hit a similar error twice before — both times due to missing API guards.”
-
-Backend: 
-- FastAPI (???)
-- MongoDB Atlas
-- Gemini API
-- Python
-
-
-# pip install fastapi uvicorn pymongo python-dotenv google-generativeai numpy
