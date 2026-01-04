@@ -3,7 +3,7 @@ import os
 
 from fastapi import FastAPI
 from pydantic import BaseModel
-from gemini import get_embedding, analyze
+from gemini import get_embedding, analyze, summarize_text
 from pymongo import MongoClient
 
 load_dotenv()
@@ -52,9 +52,11 @@ def analyze_query(q: QueryRequest):
         if analysis.startswith("INSIGHT:"):
             insight_text = analysis.replace("INSIGHT:", "").strip()
 
+            summary = summarize_text(insight_text)
             collection.insert_one({
                 "text": insight_text,
                 "type": "pattern",
+                "summary": summary,
                 "source_query": q.query,
                 "embedding": get_embedding(insight_text),
             })
@@ -73,13 +75,19 @@ class MemoryRequest(BaseModel):
 def add_memory(m: MemoryRequest):
     try:
         embedding_vector = get_embedding(m.content)
+
+        # generate summary using Gemini
+        summary = summarize_text(m.content)
+
         doc = {
             "text": m.content,
+            "summary": summary,  # NEW FIELD
             "type": m.type or "generic",
             "embedding": embedding_vector
         }
+
         collection.insert_one(doc)
-        return {"status": "success"}
+        return {"status": "success", "summary": summary}
     except Exception as e:
         return {"error": str(e)}
 
@@ -97,23 +105,43 @@ app.add_middleware(
 )
 
 @app.get("/recent-memories")
-def recent_memories(limit: int = 5):
-    docs = (
-        collection
-        .find({}, {"text": 1, "type": 1, "_id": 0})
-        .sort("_id", -1)
-        .limit(limit)
-    )
+def recent_memories():
+    """
+    Returns the most recent memories (type=memory) only, with safe summary fallback.
+    """
+    docs = collection.find(
+            {"type": {"$ne": "pattern"}},  # <-- all types except "pattern"
+            {"text": 1, "summary": 1, "type": 1}
+        ).sort("created_at", -1).limit(6)
+    result = []
+    for d in docs:
+        text = d.get("text") or "Untitled memory"
+        summary = d.get("summary") or text[:50]  # safe fallback
+        result.append({
+            "text": text,
+            "summary": summary,
+            "type": "memory"
+        })
+    return result
 
-    return list(docs)
 
-@app.get("/recent-themes")
-def recent_themes(limit: int = 5):
-    docs = (
-        collection
-        .find({ "type": "pattern" }, {"text": 1, "_id": 0})
-        .sort("_id", -1)
-        .limit(limit)
-    )
 
-    return list(docs)
+@app.get("/recent-patterns")
+def recent_patterns():
+    """
+    Returns recent AI insights (type=pattern) only, using summaries.
+    """
+    docs = collection.find({"type": "pattern"}, {"text": 1, "summary": 1, "type": 1}) \
+                     .sort("created_at", -1) \
+                     .limit(6)
+
+    result = []
+    for d in docs:
+        text = d.get("text") or "Insight"
+        summary = d.get("summary") or text[:50]
+        result.append({
+            "text": text,
+            "summary": summary,
+            "type": "pattern"
+        })
+    return result

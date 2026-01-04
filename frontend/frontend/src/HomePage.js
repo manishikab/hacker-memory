@@ -6,20 +6,23 @@ function HomePage() {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [recentEntries, setRecentEntries] = useState([]);
-  const [recentThemes, setRecentThemes] = useState([]);
+  const [recentEntries, setRecentEntries] = useState([]); // memories
+  const [recentPatterns, setRecentPatterns] = useState([]); // AI insights
 
+  // Fetch sidebar data on mount
   useEffect(() => {
     refreshSidebar();
   }, []);
 
   const refreshSidebar = async () => {
     try {
-      const entries = await fetch("http://localhost:8000/recent-memories").then(r => r.json());
-      const themes = await fetch("http://localhost:8000/recent-themes").then(r => r.json());
+      const entriesRes = await fetch("http://localhost:8000/recent-memories");
+      const entriesData = await entriesRes.json();
+      setRecentEntries(entriesData);
 
-      setRecentEntries(entries || []);
-      setRecentThemes(themes || []);
+      const patternsRes = await fetch("http://localhost:8000/recent-patterns");
+      const patternsData = await patternsRes.json();
+      setRecentPatterns(patternsData);
     } catch (err) {
       console.error("Failed to fetch sidebar data:", err);
     }
@@ -40,7 +43,6 @@ function HomePage() {
       });
 
       const data = await res.json();
-
       if (data.result) {
         setResponse(data.result);
         refreshSidebar(); // update sidebar after memory consolidation
@@ -59,38 +61,32 @@ function HomePage() {
     <div className="app">
       {/* SIDEBAR */}
       <aside className="sidebar">
-        <h2>🧠 Recent Memories</h2>
+        <h2>Recent Memories</h2>
         <ul>
           {recentEntries.length === 0 && <li>No memories yet</li>}
-          {recentEntries.map((entry, idx) => {
-            const text = entry.title || entry.text || "Untitled";
-            const date = entry.date || entry.created_at || "";
-            return (
-              <li key={idx} className="clickable" onClick={() => setQuery(text)}>
-                <strong>{text.length > 50 ? text.slice(0, 50) + "…" : text}</strong>
-                <span className="entry-type">{date}</span>
-              </li>
-            );
-          })}
+          {recentEntries.map((entry, idx) => (
+            <li
+            
+            >
+              {entry.summary}
+            </li>
+          ))}
         </ul>
 
-        <h2>🔁 Recurring Patterns</h2>
-        <div className="themes">
-          {recentThemes.length === 0 && (
-            <span className="muted">No patterns detected yet</span>
-          )}
-          {recentThemes.map((theme, idx) => {
-            const label = theme.label || theme.text || "Pattern";
-            return (
-              <span key={idx} className="theme-chip">
-                {label}
-              </span>
-            );
-          })}
-        </div>
+        <h2> Your Patterns + Tips</h2>
+        <ul>
+          {recentPatterns.length === 0 && <li>No patterns yet</li>}
+          {recentPatterns.map((pattern, idx) => (
+            <li
+             
+            >
+              {pattern.summary}
+            </li>
+          ))}
+        </ul>
       </aside>
 
-      {/* MAIN */}
+      {/* MAIN CONTENT */}
       <main className="main-content">
         <nav className="navbar">
           <div className="logo">{">_"}</div>
@@ -116,7 +112,7 @@ function HomePage() {
 
         {response && (
           <div className="response-box">
-            <h3>AI Answer</h3>
+            <h3>AI Answer:</h3>
             <p>{response}</p>
           </div>
         )}

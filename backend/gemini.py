@@ -59,7 +59,7 @@ You job is to act as a coach. Keep messages specific, but still encouraging.
         contents=prompt
     )
     return response.text
-    
+
 def summarize_insight(insight: str) -> str:
     prompt = f"""
 Summarize this insight into 2–4 words.
@@ -74,4 +74,15 @@ Insight:
         model=TEXT_MODEL,
         contents=prompt
     )
+    return response.text.strip()
+
+def summarize_text(text: str) -> str:
+   
+    prompt = f"Summarize this in a concise 5-8 word memory cue for sidebar display: {text}"
+
+    response = client.models.generate_content(
+        model=TEXT_MODEL,
+        contents=prompt
+    )
+    # Gemini returns full text, we just strip whitespace
     return response.text.strip()
