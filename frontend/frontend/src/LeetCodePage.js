@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import LeetCode from "./LeetCode"
+import "./LeetCodePage.css";
+
 
 export default function LeetCodePage({ problems, onDelete }) {
   const formRef = useRef();

@@ -5,7 +5,6 @@ import os
 load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI")
-print("MONGO_URI =", MONGO_URI)  # TEMP DEBUG LINE
 
 try:
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)

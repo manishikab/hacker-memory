@@ -1,0 +1,270 @@
+/* ===== Global ===== */
+body {
+    margin: 0;
+    font-family: 'Fira Code', monospace;
+    background-color: #0f111a;
+    color: #f5f5f5;
+  }
+  
+  /* ===== Top Navigation ===== */
+  .nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #1a1c2b;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 0 30px;
+    border-bottom: 1px solid #333;
+    z-index: 100;
+    box-sizing: border-box;
+  }
+  
+  .nav-tab {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.2s, transform 0.2s;
+  }
+  
+  .nav-tab:hover {
+    color: #00ffae;
+    transform: scale(1.05);
+  }
+  
+  /* ===== Page Heading ===== */
+  h1 {
+    margin-top: 100px;
+    text-align: center;
+    font-size: 2.5rem;
+    color: #00ffae;
+  }
+  
+  /* ===== Problem Lists ===== */
+  .problem-list {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+  
+  .problem-list h2 {
+    color: #00ffae;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+  }
+  
+  /* ===== Problem Card ===== */
+  .problem-card {
+    background-color: #1a1c2b;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+    border: 1px solid #333;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  
+  .problem-card:hover {
+    box-shadow: 0 0 15px rgba(0, 255, 174, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .problem-card h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #00ffae;
+  }
+  
+  /* ===== Form ===== */
+  .problem-meta {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .problem-meta label {
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+  
+  .problem-meta input,
+  .problem-meta textarea,
+  .problem-meta select {
+    background-color: #222339;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px 14px;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+    resize: vertical;
+  }
+  
+  .problem-meta select {
+    cursor: pointer;
+  }
+  
+  .problem-meta input:focus,
+  .problem-meta textarea:focus,
+  .problem-meta select:focus {
+    border-color: #00ffae;
+    box-shadow: 0 0 0 1px rgba(0, 255, 174, 0.3);
+  }
+  
+  .problem-meta textarea::placeholder {
+    color: #888;
+  }
+  
+  /* ===== Submit Button ===== */
+  button[type="submit"] {
+    background-color: #00ffae;
+    color: #0f111a;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #00d88c;
+    transform: translateY(-1px);
+  }
+  
+  /* ===== LeetCode Problem Item ===== */
+  .leetcode-item {
+    background-color: #222339;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-left: 4px solid #00ffae;
+  }
+  
+  .leetcode-title {
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+  
+  .leetcode-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 10px;
+  }
+  
+  .leetcode-content {
+    color: #ccc;
+    white-space: pre-wrap;
+  }
+  
+  /* ===== Difficulty Colors ===== */
+  .difficulty-easy {
+    color: #00ffae;
+  }
+  
+  .difficulty-medium {
+    color: #ffcc00;
+  }
+  
+  .difficulty-hard {
+    color: #ff5c5c;
+  }
+  
+  /* ===== Saved Problem Card ===== */
+.saved-problem {
+    background-color: #1a1c2b;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .saved-problem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(0, 255, 174, 0.15);
+  }
+  
+  /* ===== Header ===== */
+  .problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .problem-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+  }
+  
+  /* ===== Difficulty Badge ===== */
+  .difficulty-tag {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .difficulty-easy {
+    background-color: rgba(0, 255, 174, 0.15);
+    color: #00ffae;
+  }
+  
+  .difficulty-medium {
+    background-color: rgba(255, 204, 0, 0.15);
+    color: #ffcc00;
+  }
+  
+  .difficulty-hard {
+    background-color: rgba(255, 92, 92, 0.15);
+    color: #ff5c5c;
+  }
+  
+  /* ===== Body ===== */
+  .problem-body {
+    margin-bottom: 15px;
+  }
+  
+  .problem-description,
+  .problem-solution {
+    font-size: 0.9rem;
+    color: #ccc;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+  }
+  
+  .problem-description strong,
+  .problem-solution strong {
+    color: #aaa;
+  }
+  
+  /* ===== Delete Button ===== */
+  .delete-btn {
+    background-color: transparent;
+    border: 1px solid #ff5c5c;
+    color: #ff5c5c;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  
+  .delete-btn:hover {
+    background-color: #ff5c5c;
+    color: #0f111a;
+  }

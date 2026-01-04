@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 
-export default function Note({ content, title, created_at, onDelete}) {
+export default function Note({ content, title, created_at, onDelete }) {
   return (
-  <div className="note-card">
-    <div className="note">
-      <p>Note: {title}</p>
-      <div className="note-meta">
-        <span>Created: {created_at}</span>
-        <span>Content: {content}</span>
+    <div className="note-item">
+      <div className="note-header">
+        <h3 className="note-title">Note: {title}</h3>
       </div>
 
-      <div className="assignment-buttons">
-        <button onClick={() => onDelete(title)}>
-          Delete
-        </button>
+      <div className="note-meta-info">
+        Created: {created_at}
       </div>
+
+      <div className="note-content">
+        {content}
+      </div>
+
+      <button
+        className="note-delete-btn"
+        onClick={() => onDelete(title)}
+      >
+        Delete
+      </button>
     </div>
-  </div>
   );
 }

@@ -33,7 +33,7 @@ app.include_router(notes_router)
 MONGO_URI = os.getenv("MONGO_URI")
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.hacker_memory
-collection = db.memories  # your collection for embeddings
+collection = db.memories 
 
 
 class QueryRequest(BaseModel):
@@ -43,11 +43,10 @@ class QueryRequest(BaseModel):
 @app.post("/analyze")
 def analyze_query(q: QueryRequest):
     try:
-        # 1️⃣ Get embedding vector
+        # Get embedding vector
         embedding_vector = get_embedding(q.query)
 
-        # 2️⃣ Perform vector search in MongoDB
-        # Make sure your index is on the "embedding" field
+        # Perform vector search in MongoDB
         pipeline = [
             {
                 "$vectorSearch": {
@@ -61,10 +60,10 @@ def analyze_query(q: QueryRequest):
         ]
         results = list(collection.aggregate(pipeline))
 
-        # 3️⃣ Extract past memories from search results
+        # Extract past memories from search results
         memories = [doc["text"] for doc in results]
 
-        # 4️⃣ Call analyze
+        # Call analyze
         analysis = analyze(q.query, memories)
 
         # save new insights
@@ -95,12 +94,12 @@ def add_memory(m: MemoryRequest):
     try:
         embedding_vector = get_embedding(m.content)
 
-        # generate summary using Gemini
+        # generate summary using Gemini and save with ai only mode
         summary = summarize_text(m.content)
 
         doc = {
             "text": m.content,
-            "summary": summary,  # NEW FIELD
+            "summary": summary,  # NEW
             "type": m.type or "generic",
             "embedding": embedding_vector,
             "ai": True
@@ -119,24 +118,21 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # your React app
+    allow_origins=["http://localhost:3000"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 @app.get("/recent-memories")
 def recent_memories():
-    """
-    Returns the most recent memories (type=memory) only, with safe summary fallback.
-    """
     docs = collection.find(
-            {"type": {"$ne": "pattern"}},  # <-- all types except "pattern"
+            {"type": {"$ne": "pattern"}},  # everything except patterns/insights
             {"text": 1, "summary": 1, "type": 1}
         ).sort("created_at", -1).limit(6)
     result = []
     for d in docs:
         text = d.get("text") or "Untitled memory"
-        summary = d.get("summary") or text[:50]  # safe fallback
+        summary = d.get("summary")
         result.append({
             "text": text,
             "summary": summary,
@@ -148,9 +144,6 @@ def recent_memories():
 
 @app.get("/recent-patterns")
 def recent_patterns():
-    """
-    Returns recent AI insights (type=pattern) only, using summaries.
-    """
     docs = collection.find({"type": "pattern"}, {"text": 1, "summary": 1, "type": 1}) \
                      .sort("created_at", -1) \
                      .limit(6)

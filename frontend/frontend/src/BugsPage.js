@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import Bug from "./Bug"; // whatever your bug component is named
+import Bug from "./Bug"; 
+import "./BugsPage.css";
 
 export default function BugsPage({ bugs, onSubmit, onDelete }) {
   const formRef = useRef();

@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Note from "./Note";
+import "./NotePage.css"
 
 export default function NotesPage({ notes, onDelete }) {
   const formRef = useRef();

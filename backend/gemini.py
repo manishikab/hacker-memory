@@ -20,14 +20,13 @@ def get_embedding(text: str) -> list[float]:
     """
     response = client.models.embed_content(
         model=EMBED_MODEL,
-        contents=[text]  # note: contents should be a list
+        contents=[text] 
     )
 
-    # response.embeddings is a list of ContentEmbedding objects
     embedding_obj = response.embeddings[0]
 
     if isinstance(embedding_obj, types.ContentEmbedding):
-        return embedding_obj.values  # plain float list
+        return embedding_obj.values 
     else:
         raise ValueError(f"Cannot extract embedding vector from {type(embedding_obj)}")
 
@@ -51,9 +50,7 @@ You job is to act as a coach. Keep messages specific, but still encouraging.
 
 """
     
- 
 
-    # correct text generation call
     response = client.models.generate_content(
         model=TEXT_MODEL,
         contents=prompt
@@ -84,5 +81,4 @@ def summarize_text(text: str) -> str:
         model=TEXT_MODEL,
         contents=prompt
     )
-    # Gemini returns full text, we just strip whitespace
     return response.text.strip()
