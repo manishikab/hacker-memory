@@ -130,7 +130,7 @@ def recent_memories():
     Returns the most recent memories (type=memory) only, with safe summary fallback.
     """
     docs = collection.find(
-            {"type": {"$ne": "pattern"}},  # <-- all types except "pattern"
+            {"ai": True, "type": {"$ne": "pattern"}},  # FIXED FILTER
             {"text": 1, "summary": 1, "type": 1}
         ).sort("created_at", -1).limit(6)
     result = []
