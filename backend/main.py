@@ -10,6 +10,7 @@ from routes.bugRoute import router as bugs_router
 from routes.homeRoute import router as home_router
 from routes.leetcodeRoute import router as leetcode_router
 from routes.notesRoute import router as notes_router
+from routes.classesRoute import router as class_router
 
 load_dotenv()
 
@@ -28,6 +29,8 @@ app.include_router(bugs_router)
 app.include_router(home_router)
 app.include_router(leetcode_router)
 app.include_router(notes_router)
+app.include_router(class_router)
+
 
 # Connect to MongoDB
 MONGO_URI = os.getenv("MONGO_URI")

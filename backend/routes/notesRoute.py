@@ -9,6 +9,8 @@ class Notes(BaseModel):
     content: str
     title: Optional[str] = None
     type: Optional[str] = None
+    class_name: Optional[str] = None
+
     tags: Optional[List[str]] = []
     embedding: Optional[List[float]]
     created_at: Optional[datetime] = None
@@ -29,6 +31,7 @@ def get_notes():
             id=str(doc["_id"]),
             title=doc.get("title"),
             content=doc.get("content"),
+            class_name=doc.get("class_name"),
             type=doc.get("type"),
             tags=doc.get("tags", []),
             embedding=doc.get("embedding", []),
@@ -43,12 +46,15 @@ def get_notes():
 def add_notes(
     title: str = Form(...),
     content: str = Form(...),
+    class_name: str = Form(...),
     ):
 
     notes = Notes(
         title=title,
         type="notes",
         content=content,
+        class_name=class_name,
+
         tags=["notes"],
         embedding=[],
         created_at=datetime.utcnow(),
