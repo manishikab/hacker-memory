@@ -78,7 +78,7 @@ Insight:
 
 def summarize_text(text: str) -> str:
    
-    prompt = f"Summarize this in a concise 5-8 word memory cue for sidebar display: {text}"
+    prompt = f"Summarize this in a concise 5-6 word memory cue for sidebar display and only give one sentence, not multiple: {text}"
 
     response = client.models.generate_content(
         model=TEXT_MODEL,
