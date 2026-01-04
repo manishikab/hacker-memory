@@ -54,6 +54,6 @@ def add_notes(
         created_at=datetime.utcnow(),
         ai=False
     )
-    notes_dict = notes.dict()
+    notes_dict = notes.dict(exclude={"id"}) 
     memories.insert_one(notes_dict)
     return {"status": "notes added"}
