@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function HomePage({ data }) {
   const [bugs, setBugs] = useState([]);
@@ -17,6 +18,11 @@ export default function HomePage({ data }) {
 
   return (
     <div className="dashboard">
+      <div className="nav-bar">
+        <Link to="/bugs" className="nav-tab active">Bugs</Link>
+        <Link to="/notes" className="nav-tab">Notes</Link>
+        <Link to="/leetcode" className="nav-tab">Leetcode</Link>
+      </div>
       <h1>Hacker Life, Simplified</h1>
 
       <div className="sections">
