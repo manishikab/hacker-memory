@@ -32,6 +32,30 @@ export default function LeetcodePage({ problems, onDelete }) {
     formRef.current.reset();
   };
 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    await fetch("http://localhost:8000/memory", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: `Leetcode Problem:
+        Title: ${title}
+        Difficulty: ${difficulty}
+        Description: ${description}
+        Solution: ${solution}`
+        })
+    });
+
+    setTitle("");
+    setDifficulty("Easy");
+    setSolution("")
+    setDescription("");
+    setSolution("");
+    formRef.current.reset();
+  };
+
   return (
     <div>
       <div className="nav-bar">

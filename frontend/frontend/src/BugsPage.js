@@ -9,7 +9,17 @@ export default function BugsPage({ bugs, onSubmit, onDelete }) {
   const [content, setContent] = useState("");
 
   const handleBugSubmit = async (e) => {
-    e.preventDefault();      
+    e.preventDefault();
+
+    await handleShow();
+    await handleMemory();
+
+    setTitle("");
+    setContent("");
+    formRef.current.reset();
+  };
+
+  const handleShow = async () => {
     
     const formData = new FormData();
     formData.append("title", title);
@@ -18,6 +28,15 @@ export default function BugsPage({ bugs, onSubmit, onDelete }) {
     await fetch("http://localhost:8000/bugs/add/", {
       method: "POST",
       body: formData   });
+    }
+
+  const handleMemory = async () => {
+    
+    await fetch("http://localhost:8000/memory", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content: `Bug: ${title}\n${content}` })
+  });
 
     setTitle("");
     setContent("");

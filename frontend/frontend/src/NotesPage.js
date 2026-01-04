@@ -23,13 +23,40 @@ export default function NotesPage({ notes, onDelete }) {
     setTitle("");
     setContent("");
     formRef.current.reset();
+    }
+  // in case notes in undef
+  const safeNotes = notes || [];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await fetch("http://localhost:8000/memory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: `Note: ${title}\n${content}`,
+          type: "note"
+        })
+      });
+
+      
+      if (onDelete) onDelete(); 
+
+      // Reset form
+      setTitle("");
+      setContent("");
+      formRef.current.reset();
+    } catch (err) {
+      console.error("Failed to add note:", err);
+    }
   };
 
   return (
     <div>
       {/* Navigation */}
       <div className="nav-bar">
-        <Link to="/home" className="nav-tab active">Home</Link>
+        <Link to="/home" className="nav-tab">Home</Link>
         <Link to="/bugs" className="nav-tab">Bugs</Link>
         <Link to="/leetcode" className="nav-tab">Leetcode</Link>
       </div>

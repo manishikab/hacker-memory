@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Form, HTTPException
-from backend.db import memories
+from db import memories
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
@@ -13,6 +13,7 @@ class Bug(BaseModel):
     tags: Optional[List[str]] = []
     embedding: Optional[List[float]] = []
     created_at: Optional[datetime] = None
+    ai: Optional[bool] = False
 
 router = APIRouter(prefix="/bugs", tags=["bugs"])
 
@@ -51,7 +52,8 @@ def add_bug(
         type="bug",
         tags=["bug"],
         embedding=[],
-        created_at=datetime.utcnow()
+        created_at=datetime.utcnow(),
+        ai=False
     )
     bug_dict = bug.dict(exclude={"id"})
     memories.insert_one(bug_dict)

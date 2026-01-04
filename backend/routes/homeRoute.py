@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Form
-from backend.db import memories
+from db import memories
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime

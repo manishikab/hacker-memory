@@ -42,11 +42,47 @@ Past experiences:
 Current issue:
 {query}
 
-Answer the question and identify any repeated mistake or pattern.
+Answer the question and identify any repeated mistake or negative pattern based on previous entries.
+If you identify a strong repeated pattern, prefix with "INSIGHT:"
+Otherwise answer normally. Don't mention that no repeated pattern was found!
+For identified mistakes or negative patterns, offer concrete advice or resources to combat this problem in the future.
+Keep answers short, maximum 4 sentences.
+You job is to act as a coach. Keep messages specific, but still encouraging.
+
 """
+    
+ 
+
     # correct text generation call
     response = client.models.generate_content(
         model=TEXT_MODEL,
         contents=prompt
     )
     return response.text
+
+def summarize_insight(insight: str) -> str:
+    prompt = f"""
+Summarize this insight into 2–4 words.
+Use noun phrases.
+No punctuation.
+No full sentences.
+
+Insight:
+{insight}
+"""
+    response = client.models.generate_content(
+        model=TEXT_MODEL,
+        contents=prompt
+    )
+    return response.text.strip()
+
+def summarize_text(text: str) -> str:
+   
+    prompt = f"Summarize this in a concise 5-8 word memory cue for sidebar display: {text}"
+
+    response = client.models.generate_content(
+        model=TEXT_MODEL,
+        contents=prompt
+    )
+    # Gemini returns full text, we just strip whitespace
+    return response.text.strip()

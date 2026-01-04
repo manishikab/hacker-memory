@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Form
-from backend.db import memories
+from db import memories
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
@@ -14,6 +14,7 @@ class LeetCodeProblem(BaseModel):
     tags: Optional[List[str]] = []
     embedding: Optional[List[float]]
     created_at: Optional[datetime] = None
+    ai: Optional[bool] = False
 
 
 router = APIRouter(prefix="/leetcode", tags=["leetcode"])
@@ -57,7 +58,8 @@ def add_leetcode_problem(
         type="leetcode",
         tags=["leetcode"],
         embedding=[],
-        created_at=datetime.utcnow()
+        created_at=datetime.utcnow(),
+        ai=False
     )
     problem_dict = problem.dict(exclude={"id"}) 
     memories.insert_one(problem_dict)

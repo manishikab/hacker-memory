@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Form
-from backend.db import memories
+from db import memories
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
@@ -12,6 +12,7 @@ class Notes(BaseModel):
     tags: Optional[List[str]] = []
     embedding: Optional[List[float]]
     created_at: Optional[datetime] = None
+    ai: Optional[bool] = False
 
 
 router = APIRouter(prefix="/notes", tags=["notes"])
@@ -50,7 +51,8 @@ def add_notes(
         content=content,
         tags=["notes"],
         embedding=[],
-        created_at=datetime.utcnow()
+        created_at=datetime.utcnow(),
+        ai=False
     )
     notes_dict = notes.dict()
     memories.insert_one(notes_dict)
