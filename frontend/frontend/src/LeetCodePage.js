@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import LeetCode from "./LeetCode"
 
-export default function LeetcodePage({ problems, onDelete }) {
+export default function LeetCodePage({ problems, onDelete }) {
   const formRef = useRef();
 
   const [title, setTitle] = useState("");
