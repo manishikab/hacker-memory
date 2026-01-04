@@ -7,6 +7,7 @@ export default function HomePage({ data }) {
   const [messages, setMessages] = useState([]);
 
 
+
   const handleSendMessage = () => {
     if (chat.trim()) {
       setMessages([...messages, { text: chat, sender: "user" }]);

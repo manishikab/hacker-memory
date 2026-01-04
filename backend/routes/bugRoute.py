@@ -3,20 +3,41 @@ from backend.db import memories
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
+from bson import ObjectId
 
 class Bug(BaseModel):
+    id: Optional[str] = None 
     content: str
     title: Optional[str] = None
+    type: Optional[str] = None
     tags: Optional[List[str]] = []
-    embedding: Optional[List[float]]
-
+    embedding: Optional[List[float]] = []
+    created_at: Optional[datetime] = None
 
 router = APIRouter(prefix="/bugs", tags=["bugs"])
 
 @router.get("/")
 def get_bugs():
-    bugs = [Bug(**doc) for doc in memories.find({"type": "bug"})]
-    return {"bugs": bugs}
+    
+    docs = memories.find({"type": "bug"})
+    
+    bugs = []
+
+    for doc in docs:
+        bug = Bug(
+            id=str(doc["_id"]),   # convert ObjectId → string
+            title=doc.get("title"),
+            content=doc.get("content"),
+            type=doc.get("type"),
+            tags=doc.get("tags", []),
+            embedding=doc.get("embedding", []),
+            created_at=doc.get("created_at")
+        )
+        bugs.append(bug)
+
+    return {"bugs": [b.dict() for b in bugs]}
+
+
 
 @router.post("/add/")
 def add_bug(
@@ -27,11 +48,12 @@ def add_bug(
     bug = Bug(
         title=title,
         content=content,
+        type="bug",
         tags=["bug"],
         embedding=[],
         created_at=datetime.utcnow()
     )
-    bug_dict = bug.dict()
+    bug_dict = bug.dict(exclude={"id"})
     memories.insert_one(bug_dict)
     return {"status": "bug added"}
 

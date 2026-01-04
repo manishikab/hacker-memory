@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export default function Bug({ content, title, created_at, onDelete}) {
+export default function Bug({ id, content, title, created_at, onDelete}) {
   return (
   <div className="bug-card">
     <div className="bug">
@@ -12,7 +12,7 @@ export default function Bug({ content, title, created_at, onDelete}) {
       </div>
 
       <div className="assignment-buttons">
-        <button onClick={() => onDelete(title)}>
+        <button onClick={() => onDelete(id)}>
           Delete
         </button>
       </div>

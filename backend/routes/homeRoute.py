@@ -8,11 +8,11 @@ router = APIRouter(prefix="/home", tags=["home"])
 @router.get("/")
 def get_stats():
     bug_count = memories.count_documents({"type": "bug"})
+    notes_count = memories.count_documents({"type": "notes"})
     leetcode_count = memories.count_documents({"type": "leetcode"})
 
     return {
         "bugs": bug_count,
+        "notes": notes_count,
         "leetcode": leetcode_count
     }
-
-#need to connect the ai part

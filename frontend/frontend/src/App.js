@@ -17,54 +17,47 @@ export default function App() {
   const location = useLocation();
 
   useEffect(() => {
-    fetch("/bugs/")
+    fetch("http://localhost:8000/bugs/")
     .then(res => res.json())
-    .then(data => setBugs(data.bugs));
+    .then(data => {
+      console.log("Bugs received from backend:", data)
+      setBugs(data.bugs)
+    });
 
-    fetch("/leetcode/")
+    fetch("http://localhost:8000/leetcode/")
     .then(res => res.json())
     .then(data => setProblems(data.problems));
 
-  fetch("/notes/")
+  fetch("http://localhost:8000/notes/")
     .then(res => res.json())
     .then(data => setNotes(data.notes));
 
-    fetch("/")
+    fetch("http://localhost:8000/home/")
     .then(res => res.json())
     .then(data => setStats(data));
   }, [location.key]);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
+  
 
-    fetch("/bugs/add/", {
-      method: "POST",
-      body: formData
-    }).then(() => {
-      fetch("/bugs/")
-        .then(res => res.json())
-        .then(data => setBugs(data.bugs));
-    })
-  }
-
-  function handleDelete(title) {
-    fetch(`/bugs/${title}`, {
+  function handleDelete(id) {
+    fetch(`http://localhost:8000/bugs/${id}`, {
       method: "DELETE"
     }).then(() => {
-      setBugs(bugs.filter(a => a.title !== title));
+      setBugs(bugs.filter(a => a.id !== id));
     });
   }
 
   return (
     
       <Routes>
-        <Route path="/" element={<HomePage data={stats} />} />
-        <Route path="/notes" element={<NotesPage notes={notes} onSubmit={handleSubmit} onDelete={handleDelete}/>} />
-        <Route path="/bugs" element={<BugsPage bugs={bugs} onSubmit={handleSubmit} onDelete={handleDelete} />} />
-        <Route path="/leetcode" element={<LeetCodePage problems={problems} onSubmit={handleSubmit} onDelete={handleDelete} />} />
+        <Route path="/home" element={<HomePage data={stats} />} />
+        <Route path="/notes" element={<NotesPage notes={notes} onDelete={handleDelete}/>} />
+        
+        <Route path="/leetcode" element={<LeetCodePage problems={problems} onDelete={handleDelete} />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/logout" element={<LogoutPage />} />
+
+        <Route path="/bugs" element={<BugsPage bugs={bugs} onDelete={handleDelete} />} />
       </Routes>
     
   );

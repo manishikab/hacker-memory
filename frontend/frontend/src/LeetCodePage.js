@@ -1,25 +1,33 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import LeetCode from "./LeetCode"
 
-export default function LeetcodePage({ problems, onSubmit, onDelete }) {
+export default function LeetcodePage({ problems, onDelete }) {
   const formRef = useRef();
 
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
   const [description, setDescription] = useState("");
+  const [solution, setSolution] = useState("")
 
-  const handleSubmit = async (e) => {
+  const handleLeetCodeSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(e);
+    
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("difficulty", difficulty);
+    formData.append("description", description);
+    formData.append("solution", solution);
+
 
     await fetch("http://localhost:8000/leetcode/add/", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, difficulty, description })
+      body: formData
     });
 
     setTitle("");
     setDifficulty("Easy");
+    setSolution("")
     setDescription("");
     formRef.current.reset();
   };
@@ -38,7 +46,7 @@ export default function LeetcodePage({ problems, onSubmit, onDelete }) {
         <div className="problem-card">
           <h2>Add Leetcode Problem</h2>
 
-          <form ref={formRef} onSubmit={handleSubmit}>
+          <form ref={formRef} onSubmit={handleLeetCodeSubmit}>
             <div className="problem-meta">
               <label>Title</label>
               <input
@@ -81,8 +89,8 @@ export default function LeetcodePage({ problems, onSubmit, onDelete }) {
                 name="solution"
                 placeholder="Describe the solution or add an image"
                 rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={solution}
+                onChange={(e) => setSolution(e.target.value)}
                 required
               />
             </div>
@@ -91,21 +99,22 @@ export default function LeetcodePage({ problems, onSubmit, onDelete }) {
           </form>
         </div>
       </div>
-{/*  
+ 
       <div className="problem-list">
         <h2>Saved Problems</h2>
-        {problems.map((p) => (
-          <LeetcodeProblem
-            key={p._id}
-            problem_id={p._id}
+        {Array.isArray(problems) && problems.map((p) => (
+          <LeetCode
+            key={p.id}
+            problem_id={p.id}
             title={p.title}
             difficulty={p.difficulty}
             description={p.description}
+            solution={p.solution}
             onDelete={onDelete}
           />
         ))}
       </div>
-      */}
+     
     </div>
   );
 }

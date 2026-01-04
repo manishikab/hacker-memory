@@ -2,37 +2,27 @@ import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Note from "./Note";
 
-export default function NotesPage({ notes, onSubmit, onDelete }) {
+export default function NotesPage({ notes, onDelete }) {
   const formRef = useRef();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleNotesSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(e);
     
-    try {
-      const res = await fetch("http://localhost:8000/notes/add/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Uncomment if using auth:
-          // "Authorization": `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({ title, content }),
-      });
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
 
-      if (!res.ok) {
-        throw new Error("Failed to create note");
-      }
+    await fetch("http://localhost:8000/notes/add/", {
+      method: "POST",
+      body: formData
+    });
 
-      setTitle("");
-      setContent("");
-      formRef.current.reset();
-    } catch (err) {
-      console.error(err);
-    }
+    setTitle("");
+    setContent("");
+    formRef.current.reset();
   };
 
   return (
@@ -51,7 +41,7 @@ export default function NotesPage({ notes, onSubmit, onDelete }) {
         <div className="note-card">
           <h2>Create Note</h2>
 
-          <form ref={formRef} onSubmit={handleSubmit}>
+          <form ref={formRef} onSubmit={handleNotesSubmit}>
             <div className="note-meta">
               <label>Title</label>
               <input
@@ -82,8 +72,7 @@ export default function NotesPage({ notes, onSubmit, onDelete }) {
 
         {notes.map((note) => (
           <Note
-            key={note._id}
-            id={note._id}
+            key={note.id}
             title={note.title}
             content={note.content}
             created_at={note.created_at}

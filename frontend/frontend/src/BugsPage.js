@@ -8,9 +8,8 @@ export default function BugsPage({ bugs, onSubmit, onDelete }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // onSubmit(e);         
+  const handleBugSubmit = async (e) => {
+    e.preventDefault();      
     
     const formData = new FormData();
     formData.append("title", title);
@@ -39,7 +38,7 @@ export default function BugsPage({ bugs, onSubmit, onDelete }) {
         <div className="bug-card">
           <h2>Create bug</h2>
 
-          <form ref={formRef} onSubmit={handleSubmit}>
+          <form ref={formRef} onSubmit={handleBugSubmit}>
             <div className="bug-meta">
               <label>Title or Number</label>
               <input
@@ -71,8 +70,9 @@ export default function BugsPage({ bugs, onSubmit, onDelete }) {
         <h2>Bugs</h2>
         {bugs.map((a) => (
           <Bug
-            key={a._id}
-            bug_number={a._id}
+            key={a.id}
+            id={a.id}
+            bug_number={a.id}
             title={a.title}
             content={a.content}
             onDelete={onDelete}

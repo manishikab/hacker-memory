@@ -3,12 +3,31 @@ import os
 
 from fastapi import FastAPI
 from pydantic import BaseModel
-from gemini import get_embedding, analyze
+from backend.gemini import get_embedding, analyze
 from pymongo import MongoClient
+from fastapi.middleware.cors import CORSMiddleware
+from backend.routes.bugRoute import router as bugs_router
+from backend.routes.homeRoute import router as home_router
+from backend.routes.leetcodeRoute import router as leetcode_router
+from backend.routes.notesRoute import router as notes_router
 
 load_dotenv()
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+app.include_router(bugs_router)
+app.include_router(home_router)
+app.include_router(leetcode_router)
+app.include_router(notes_router)
 
 # Connect to MongoDB
 MONGO_URI = os.getenv("MONGO_URI")
